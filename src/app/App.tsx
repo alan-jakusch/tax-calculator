@@ -1,10 +1,5 @@
-export default function App() {
+import { TaxCalculatorPage } from '@/features'
 
-  return (
-    <main className="page">
-      <header>
-        <h1>Tax Calculator</h1>
-      </header>
-    </main>
-  )
+export default function App() {
+  return <TaxCalculatorPage />
 }

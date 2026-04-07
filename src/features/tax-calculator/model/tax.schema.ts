@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const taxFormSchema = z.object({
   income: z
-    .number({ invalid_type_error: 'Income must be a number' })
+    .number({ error: 'Income must be a number' })
     .min(0, 'Income must be non-negative'),
   taxYear: z.union([
     z.literal(2019),
