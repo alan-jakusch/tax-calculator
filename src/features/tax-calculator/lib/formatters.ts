@@ -28,7 +28,7 @@ export function parseEnglishNumber(value: unknown): number {
   const normalized = value.trim()
   if (normalized === '') return Number.NaN
 
-  const englishNumberPattern = /^(\d{1,3}(,\d{3})*|\d+)(\.\d+)?$/
+  const englishNumberPattern = /^-?(\d{1,3}(,\d{3})*|\d+)(\.\d+)?$/
   if (!englishNumberPattern.test(normalized)) return Number.NaN
 
   return Number(normalized.replaceAll(',', ''))
