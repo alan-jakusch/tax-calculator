@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { taxFormSchema } from '../model/tax.schema'
+import type { TaxFormSchema } from '../model/tax.schema'
 import type { TaxFormValues } from '../model/types'
 import { Button, FormField, Select } from '@/shared/ui'
 
@@ -21,12 +22,19 @@ export function TaxForm({ onSubmit, isLoading }: TaxFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<TaxFormValues>({
+  } = useForm<TaxFormSchema>({
     resolver: zodResolver(taxFormSchema),
   })
 
   return (
-    <form onSubmit={handleSubmit((data) => onSubmit(data))} noValidate className="flex flex-col gap-5">
+    <form
+      onSubmit={handleSubmit((data) => {
+        if (data.taxYear === undefined) return
+        onSubmit({ income: data.income, taxYear: data.taxYear })
+      })}
+      noValidate
+      className="flex flex-col gap-5"
+    >
       <FormField
         label="Annual Income"
         type="number"

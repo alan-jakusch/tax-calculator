@@ -33,7 +33,7 @@ export function TaxCalculatorPage() {
             <h2 className="text-base font-semibold text-text-primary">Enter your details</h2>
           </CardHeader>
           <CardContent>
-            <TaxForm onSubmit={setFormValues} isLoading={enabled && isLoading} />
+            <TaxForm onSubmit={(values) => setFormValues(values)} isLoading={enabled && isLoading} />
           </CardContent>
         </Card>
 
