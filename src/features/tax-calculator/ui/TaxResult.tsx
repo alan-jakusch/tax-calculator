@@ -42,21 +42,21 @@ export function TaxResult({ isLoading, isError, error, data, taxYear }: TaxResul
 
   return (
     <div className="flex flex-col gap-5 animate-slide-up">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col gap-1 p-5 rounded-xl bg-accent/5 border border-accent/20">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex min-w-0 flex-col gap-1 rounded-xl border border-accent/20 bg-accent/5 p-5">
           <span className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
             Total Tax
           </span>
-          <span className="text-2xl font-bold text-accent">
+          <span className="min-w-0 break-all text-xl font-bold leading-tight text-accent sm:text-2xl">
             {currencyCompact.format(data.totalTax)}
           </span>
         </div>
 
-        <div className="flex flex-col gap-1 p-5 rounded-xl bg-secondary/5 border border-secondary/20">
+        <div className="flex min-w-0 flex-col gap-1 rounded-xl border border-secondary/20 bg-secondary/5 p-5">
           <span className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
             Effective Rate
           </span>
-          <span className="text-2xl font-bold text-secondary">
+          <span className="min-w-0 wrap-break-word text-xl font-bold leading-tight text-secondary sm:text-2xl">
             {percentDetailed.format(data.effectiveRate)}
           </span>
         </div>
