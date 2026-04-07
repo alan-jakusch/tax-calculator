@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { taxFormSchema } from '../model/tax.schema'
 import type { TaxFormSchema } from '../model/tax.schema'
 import type { TaxFormValues } from '../model/types'
+import { parseEnglishNumber } from '../lib/formatters'
 import { Button, FormField, Select } from '@/shared/ui'
 
 const TAX_YEAR_OPTIONS = [
@@ -37,13 +38,14 @@ export function TaxForm({ onSubmit, isLoading }: TaxFormProps) {
     >
       <FormField
         label="Annual Income"
-        type="number"
+        type="text"
+        inputMode="decimal"
         min="0"
         step="1"
-        placeholder="e.g. 75000"
+        placeholder="e.g. 1,000.00"
         error={errors.income?.message}
         required
-        {...register('income', { valueAsNumber: true })}
+        {...register('income', { setValueAs: parseEnglishNumber })}
       />
 
       <Select
