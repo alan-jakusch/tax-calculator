@@ -36,9 +36,10 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             aria-invalid={!!error}
             aria-describedby={error ? errorId : undefined}
             className={cn(
-              'w-full h-10 px-3 pr-10 text-base bg-surface text-text-primary rounded-md border appearance-none',
-              'transition-colors duration-200 ease-out cursor-pointer',
-              'focus:outline-none focus:ring-2 focus:ring-border-focus/25 focus:border-border-focus',
+              'w-full h-11 px-4 pr-10 text-base bg-surface-glass text-text-primary rounded-md border appearance-none',
+              'backdrop-blur-md',
+              'transition-all duration-200 ease-out cursor-pointer',
+              'focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary',
               'disabled:opacity-50 disabled:cursor-not-allowed',
               error
                 ? 'border-error focus:ring-error/25 focus:border-error'

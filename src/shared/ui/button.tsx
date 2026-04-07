@@ -15,15 +15,15 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-accent text-white hover:bg-accent-light focus-visible:ring-accent',
+    'bg-cta text-text hover:bg-cta-light focus-visible:ring-primary shadow-md hover:shadow-lg hover:-translate-y-0.5',
   secondary:
-    'bg-secondary text-white hover:bg-secondary-light focus-visible:ring-secondary',
+    'bg-transparent text-primary border-2 border-primary hover:bg-primary/10 focus-visible:ring-primary',
   outline:
-    'border border-border bg-transparent text-text-primary hover:bg-background focus-visible:ring-accent',
+    'border border-border bg-transparent text-text-primary hover:bg-white/10 focus-visible:ring-primary',
   ghost:
-    'bg-transparent text-text-primary hover:bg-background focus-visible:ring-accent',
+    'bg-transparent text-text-primary hover:bg-white/10 focus-visible:ring-primary',
   destructive:
-    'bg-error text-white hover:bg-red-700 focus-visible:ring-error',
+    'bg-error text-text hover:opacity-90 focus-visible:ring-error',
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -57,8 +57,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading}
         className={cn(
           'inline-flex items-center justify-center font-semibold rounded-md',
-          'transition-colors duration-200 ease-out',
+          'transition-all duration-200 ease-out',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+          'focus-visible:ring-offset-background',
           'cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed',
           variantClasses[variant],
           sizeClasses[size],

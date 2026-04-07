@@ -46,7 +46,7 @@ function Alert({ variant = 'info', title, children, className }: AlertProps) {
     <div
       role="alert"
       className={cn(
-        'flex gap-3 p-4 rounded-md border-l-4 animate-fade-in',
+        'flex gap-3 p-4 rounded-md border border-l-4 border-border backdrop-blur-md animate-fade-in',
         config.bg,
         config.border,
         className,

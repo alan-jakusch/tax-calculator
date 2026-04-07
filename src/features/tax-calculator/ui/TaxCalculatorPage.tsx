@@ -20,7 +20,7 @@ export function TaxCalculatorPage() {
       <div className="w-full max-w-lg flex flex-col gap-8">
 
         <header className="flex flex-col gap-2 text-center">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-primary">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary">
             Tax Calculator
           </h1>
           <p className="text-text-secondary text-sm sm:text-base">
@@ -28,7 +28,7 @@ export function TaxCalculatorPage() {
           </p>
         </header>
 
-        <Card className="bg-white/80 backdrop-blur-sm shadow-md">
+        <Card className="shadow-lg">
           <CardHeader className="pb-4">
             <h2 className="text-base font-semibold text-text-primary">Enter your details</h2>
           </CardHeader>
@@ -38,7 +38,7 @@ export function TaxCalculatorPage() {
         </Card>
 
         {enabled && (
-          <Card className="bg-white/80 backdrop-blur-sm shadow-md">
+          <Card className="shadow-lg">
             <CardContent className="pt-6">
               <TaxResult
                 isLoading={isLoading}

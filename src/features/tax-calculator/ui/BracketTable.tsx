@@ -13,10 +13,10 @@ export function BracketTable({ bracketResults }: BracketTableProps) {
   )
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-border">
+    <div className="overflow-x-auto rounded-lg border border-border bg-surface-glass backdrop-blur-md shadow-md">
       <table className="w-full text-sm">
         <thead>
-          <tr className="bg-background text-text-secondary border-b border-border">
+          <tr className="bg-white/5 text-text-secondary border-b border-border">
             <th className="px-4 py-3 text-left font-semibold">Rate</th>
             <th className="px-4 py-3 text-right font-semibold">Taxable Income</th>
             <th className="px-4 py-3 text-right font-semibold">Tax Amount</th>
@@ -32,8 +32,8 @@ export function BracketTable({ bracketResults }: BracketTableProps) {
                 className={cn(
                   'border-b border-border last:border-0 transition-colors',
                   isActive
-                    ? 'bg-secondary/5 border-l-2 border-l-secondary font-medium'
-                    : 'bg-surface text-text-secondary',
+                    ? 'bg-primary/10 border-l-2 border-l-primary font-medium text-text-primary'
+                    : 'bg-transparent text-text-secondary',
                 )}
               >
                 <td className="px-4 py-3 font-semibold text-text-primary">

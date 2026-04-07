@@ -20,10 +20,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           aria-invalid={error}
           className={cn(
-            'w-full h-10 px-3 text-base bg-surface text-text-primary rounded-md border',
+            'w-full h-11 px-4 text-base bg-surface-glass text-text-primary rounded-md border',
             'placeholder:text-text-muted',
-            'transition-colors duration-200 ease-out',
-            'focus:outline-none focus:ring-2 focus:ring-border-focus/25 focus:border-border-focus',
+            'backdrop-blur-md',
+            'transition-all duration-200 ease-out',
+            'focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary',
             'disabled:opacity-50 disabled:cursor-not-allowed',
             error
               ? 'border-error focus:ring-error/25 focus:border-error'
