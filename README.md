@@ -1,75 +1,88 @@
-# React + TypeScript + Vite
+# Tax Calculator Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend application for calculating Canadian federal marginal income tax based on tax brackets returned by the backend API.
 
-Currently, two official plugins are available:
+## Project Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This app allows users to:
 
-## React Compiler
+- Enter annual income
+- Select a tax year (2019 to 2022)
+- Fetch tax brackets from the backend
+- Calculate and display:
+  - Total tax
+  - Bracket-by-bracket breakdown
+  - Effective tax rate
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+The UI also handles loading states, API errors, and common edge cases (such as zero income).
 
-Note: This will impact Vite dev & build performances.
+## Architecture (FSD Lite)
 
-## Expanding the ESLint configuration
+The project follows a lightweight Feature-Sliced Design structure:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- `src/app`: Application bootstrap and top-level composition
+- `src/features/tax-calculator`: Tax calculator feature modules (API, model, hooks, and UI)
+- `src/shared`: Reusable UI components and shared utilities
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Libraries and Tooling
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Main technologies used in this frontend:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- React 19
+- TypeScript
+- Vite
+- React Hook Form
+- Zod
+- TanStack Query
+- Tailwind CSS
+- Vitest
+- Testing Library
+
+## How to Run
+
+### Prerequisites
+
+- Node.js `v24`
+- npm
+
+### Install dependencies
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Start development server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+### Build for production
+
+```bash
+npm run build
+```
+
+### Preview production build
+
+```bash
+npm run preview
+```
+
+### Run tests
+
+```bash
+npm run test
+npm run test:run
+npm run test:coverage
+```
+
+## Backend Requirement
+
+This frontend expects the backend API to be running at:
+
+`http://localhost:5001`
+
+Used endpoint pattern:
+
+`GET /tax-calculator/tax-year/{year}`
