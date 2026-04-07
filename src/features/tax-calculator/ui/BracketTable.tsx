@@ -1,14 +1,9 @@
 import type { BracketResult } from '../model/types'
+import { currencyDetailed, formatRatePercent } from '../lib/formatters'
 import { cn } from '@/shared/lib'
 
 interface BracketTableProps {
   bracketResults: BracketResult[]
-}
-
-const currencyFmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 2 })
-
-function formatRate(rate: number) {
-  return `${(rate * 100).toFixed(0)}%`
 }
 
 export function BracketTable({ bracketResults }: BracketTableProps) {
@@ -42,13 +37,13 @@ export function BracketTable({ bracketResults }: BracketTableProps) {
                 )}
               >
                 <td className="px-4 py-3 font-semibold text-text-primary">
-                  {formatRate(b.rate)}
+                  {formatRatePercent(b.rate)}
                 </td>
                 <td className="px-4 py-3 text-right">
-                  {b.taxable > 0 ? currencyFmt.format(b.taxable) : <span className="text-text-muted">—</span>}
+                  {b.taxable > 0 ? currencyDetailed.format(b.taxable) : <span className="text-text-muted">—</span>}
                 </td>
                 <td className="px-4 py-3 text-right">
-                  {b.tax > 0 ? currencyFmt.format(b.tax) : <span className="text-text-muted">—</span>}
+                  {b.tax > 0 ? currencyDetailed.format(b.tax) : <span className="text-text-muted">—</span>}
                 </td>
               </tr>
             )

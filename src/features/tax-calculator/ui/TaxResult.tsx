@@ -1,5 +1,6 @@
 import { BracketTable } from './BracketTable'
 import type { TaxResult as TaxResultType, TaxYear } from '../model/types'
+import { currencyCompact, percentDetailed } from '../lib/formatters'
 import { Alert, Skeleton, Separator } from '@/shared/ui'
 
 interface TaxResultProps {
@@ -9,18 +10,6 @@ interface TaxResultProps {
   data?: TaxResultType
   taxYear?: TaxYear
 }
-
-const currencyFmt = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 0,
-})
-
-const percentFmt = new Intl.NumberFormat('en-US', {
-  style: 'percent',
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-})
 
 export function TaxResult({ isLoading, isError, error, data, taxYear }: TaxResultProps) {
   if (isLoading) {
@@ -59,7 +48,7 @@ export function TaxResult({ isLoading, isError, error, data, taxYear }: TaxResul
             Total Tax
           </span>
           <span className="text-2xl font-bold text-accent">
-            {currencyFmt.format(data.totalTax)}
+            {currencyCompact.format(data.totalTax)}
           </span>
         </div>
 
@@ -68,7 +57,7 @@ export function TaxResult({ isLoading, isError, error, data, taxYear }: TaxResul
             Effective Rate
           </span>
           <span className="text-2xl font-bold text-secondary">
-            {percentFmt.format(data.effectiveRate)}
+            {percentDetailed.format(data.effectiveRate)}
           </span>
         </div>
       </div>
