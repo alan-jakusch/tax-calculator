@@ -51,6 +51,14 @@ Main technologies used in this frontend:
 npm install
 ```
 
+### Configure environment variables
+
+Create a `.env` file in the project root with:
+
+```bash
+VITE_API_BASE_URL=http://localhost:5001
+```
+
 ### Start development server
 
 ```bash
@@ -79,7 +87,11 @@ npm run test:coverage
 
 ## Backend Requirement
 
-This frontend expects the backend API to be running at:
+This frontend expects the backend API base URL to be set in `.env` using:
+
+`VITE_API_BASE_URL`
+
+For local development, use:
 
 `http://localhost:5001`
 
