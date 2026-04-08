@@ -6,7 +6,7 @@ import { createElement, type ReactNode } from 'react'
 import { server } from '@/test/server'
 import { useTaxCalculator } from '../useTaxCalculator'
 import { mockBrackets } from '@/test/handlers'
-import { TaxApiError } from '../../api/tax.api'
+import { TaxApiError } from '../../api'
 
 function createWrapper() {
   const queryClient = new QueryClient({

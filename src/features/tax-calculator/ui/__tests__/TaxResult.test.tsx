@@ -2,9 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { TaxResult } from '../TaxResult'
-import type { TaxResult as TaxResultType } from '../../model/types'
-import { currencyCompact } from '../../lib/formatters'
-import { TaxApiError } from '../../api/tax.api'
+import type { TaxResult as TaxResultType } from '../../model'
+import { currencyCompact } from '../../lib'
+import { TaxApiError } from '../../api'
 
 const mockResult: TaxResultType = {
   totalTax: 15000,
@@ -27,7 +27,7 @@ describe('TaxResult', () => {
 
   it('shows loading skeleton when isLoading is true', () => {
     const { container } = render(
-      <TaxResult isLoading={true} isError={false} data={undefined} />
+      <TaxResult isLoading={true} isFetching={true} isError={false} data={undefined} />
     )
     expect(container.querySelector('[data-testid="tax-result-skeleton"]')).toBeInTheDocument()
   })
@@ -36,6 +36,7 @@ describe('TaxResult', () => {
     render(
       <TaxResult
         isLoading={false}
+        isFetching={false}
         isError={true}
         error={retryableError}
         data={undefined}
@@ -54,28 +55,29 @@ describe('TaxResult', () => {
     render(
       <TaxResult
         isLoading={false}
+        isFetching={false}
         isError={true}
         error={configError}
         data={undefined}
       />
     )
 
-    expect(screen.getByText(/api base url is not configured/i)).toBeInTheDocument()
+    expect(screen.getByText(/service is unavailable right now/i)).toBeInTheDocument()
   })
 
   it('renders totalTax formatted as currency', () => {
-    render(<TaxResult isLoading={false} isError={false} data={mockResult} />)
+    render(<TaxResult isLoading={false} isFetching={false} isError={false} data={mockResult} />)
     expect(screen.getByText(currencyCompact.format(mockResult.totalTax))).toBeInTheDocument()
   })
 
   it('renders effectiveRate as a percentage', () => {
-    render(<TaxResult isLoading={false} isError={false} data={mockResult} />)
+    render(<TaxResult isLoading={false} isFetching={false} isError={false} data={mockResult} />)
     expect(screen.getByText(/20(\.00)?%/)).toBeInTheDocument()
   })
 
   it('renders nothing when data is undefined and no loading/error', () => {
     const { container } = render(
-      <TaxResult isLoading={false} isError={false} data={undefined} />
+      <TaxResult isLoading={false} isFetching={false} isError={false} data={undefined} />
     )
     expect(container).toBeEmptyDOMElement()
   })
@@ -86,6 +88,7 @@ describe('TaxResult', () => {
     render(
       <TaxResult
         isLoading={false}
+        isFetching={false}
         isError={true}
         error={retryableError}
         data={undefined}
@@ -106,6 +109,7 @@ describe('TaxResult', () => {
     render(
       <TaxResult
         isLoading={false}
+        isFetching={false}
         isError={true}
         error={nonRetryableError}
         data={undefined}
@@ -114,5 +118,20 @@ describe('TaxResult', () => {
     )
 
     expect(screen.queryByRole('button', { name: /try again/i })).not.toBeInTheDocument()
+  })
+
+  it('disables retry button while refetch is in progress', () => {
+    render(
+      <TaxResult
+        isLoading={false}
+        isFetching={true}
+        isError={true}
+        error={retryableError}
+        data={undefined}
+        onRetry={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByRole('button', { name: /try again/i })).toBeDisabled()
   })
 })

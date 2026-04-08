@@ -1,4 +1,5 @@
-import type { TaxBracketsResponse, TaxYear } from '../model/types'
+import type { TaxBracketsResponse, TaxYear } from '../model'
+import { logTaxApiFailure } from '@/shared/lib'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 const REQUEST_TIMEOUT_MS = 10_000
@@ -69,19 +70,42 @@ function isValidTaxPayload(payload: unknown): payload is TaxBracketsResponse {
   return true
 }
 
-export async function fetchTaxBrackets(taxYear: TaxYear): Promise<TaxBracketsResponse> {
+function resolveApiBaseUrl() {
   if (typeof API_BASE_URL !== 'string' || API_BASE_URL.trim() === '') {
-    throw new TaxApiError('Missing VITE_API_BASE_URL. Set it in your environment file.', {
+    throw new TaxApiError('Tax service is not configured.', {
       code: 'config',
       retryable: false,
     })
   }
 
+  try {
+    const parsed = new URL(API_BASE_URL)
+    const isLocalhost = parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1'
+    if (import.meta.env.PROD && parsed.protocol !== 'https:' && !isLocalhost) {
+      throw new TaxApiError('Tax service configuration is invalid.', {
+        code: 'config',
+        retryable: false,
+      })
+    }
+
+    return parsed.toString().replace(/\/$/, '')
+  } catch (error) {
+    if (error instanceof TaxApiError) throw error
+    throw new TaxApiError('Tax service configuration is invalid.', {
+      code: 'config',
+      retryable: false,
+    })
+  }
+}
+
+export async function fetchTaxBrackets(taxYear: TaxYear): Promise<TaxBracketsResponse> {
+  const baseUrl = resolveApiBaseUrl()
+
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
 
   try {
-    const res = await fetch(`${API_BASE_URL}/tax-calculator/tax-year/${taxYear}`, {
+    const res = await fetch(`${baseUrl}/tax-calculator/tax-year/${taxYear}`, {
       signal: controller.signal,
     })
 
@@ -103,33 +127,44 @@ export async function fetchTaxBrackets(taxYear: TaxYear): Promise<TaxBracketsRes
 
     return payload
   } catch (error) {
-    if (error instanceof TaxApiError) throw error
+    if (error instanceof TaxApiError) {
+      logTaxApiFailure({ code: error.code, status: error.status, retryable: error.retryable, taxYear })
+      throw error
+    }
 
     if (error instanceof DOMException && error.name === 'AbortError') {
-      throw new TaxApiError('Request timed out while loading tax data.', {
+      const apiError = new TaxApiError('Request timed out while loading tax data.', {
         code: 'timeout',
         retryable: true,
       })
+      logTaxApiFailure({ code: apiError.code, retryable: apiError.retryable, taxYear })
+      throw apiError
     }
 
     if (error instanceof SyntaxError) {
-      throw new TaxApiError('Invalid tax data format received from API.', {
+      const apiError = new TaxApiError('Invalid tax data format received from API.', {
         code: 'invalid_payload',
         retryable: false,
       })
+      logTaxApiFailure({ code: apiError.code, retryable: apiError.retryable, taxYear })
+      throw apiError
     }
 
     if (error instanceof Error) {
-      throw new TaxApiError('Network error while loading tax data. Check your connection.', {
+      const apiError = new TaxApiError('Network error while loading tax data. Check your connection.', {
         code: 'network',
         retryable: true,
       })
+      logTaxApiFailure({ code: apiError.code, retryable: apiError.retryable, taxYear })
+      throw apiError
     }
 
-    throw new TaxApiError('Unexpected error while loading tax data.', {
+    const apiError = new TaxApiError('Unexpected error while loading tax data.', {
       code: 'unknown',
       retryable: false,
     })
+    logTaxApiFailure({ code: apiError.code, retryable: apiError.retryable, taxYear })
+    throw apiError
   } finally {
     clearTimeout(timeout)
   }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { TaxApiError } from '../../api/tax.api'
+import { TaxApiError } from '../../api'
 import { getTaxErrorMessage } from '../taxErrorMessage'
 
 describe('getTaxErrorMessage', () => {
@@ -8,14 +8,12 @@ describe('getTaxErrorMessage', () => {
   })
 
   it('maps config errors', () => {
-    const error = new TaxApiError('Missing VITE_API_BASE_URL. Set it in your environment file.', {
+    const error = new TaxApiError('Tax service is not configured.', {
       code: 'config',
       retryable: false,
     })
 
-    expect(getTaxErrorMessage(error)).toBe(
-      'API base URL is not configured. Set VITE_API_BASE_URL in your environment.',
-    )
+    expect(getTaxErrorMessage(error)).toBe('The tax service is unavailable right now. Please try again later.')
   })
 
   it('maps invalid payload errors', () => {
@@ -24,9 +22,7 @@ describe('getTaxErrorMessage', () => {
       retryable: false,
     })
 
-    expect(getTaxErrorMessage(error)).toBe(
-      'The tax service returned invalid data. Please contact support if this keeps happening.',
-    )
+    expect(getTaxErrorMessage(error)).toBe('The tax service returned an unexpected response. Please try again later.')
   })
 
   it('maps timeout errors', () => {

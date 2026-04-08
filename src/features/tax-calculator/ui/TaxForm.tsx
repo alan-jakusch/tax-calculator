@@ -1,9 +1,8 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { taxFormSchema } from '../model/tax.schema'
-import type { TaxFormSchema } from '../model/tax.schema'
-import type { TaxFormValues } from '../model/types'
-import { parseEnglishNumber } from '../lib/formatters'
+import { taxFormSchema } from '../model'
+import type { TaxFormSchema, TaxFormValues } from '../model'
+import { parseEnglishNumber } from '../lib'
 import { Button, FormField, Select } from '@/shared/ui'
 
 const TAX_YEAR_OPTIONS = [

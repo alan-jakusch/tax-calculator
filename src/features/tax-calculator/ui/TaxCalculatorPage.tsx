@@ -1,19 +1,20 @@
 import { useState } from 'react'
 import { TaxForm } from './TaxForm'
 import { TaxResult } from './TaxResult'
-import { useTaxCalculator } from '../hooks/useTaxCalculator'
-import type { TaxFormValues } from '../model/types'
+import { useTaxCalculator } from '../hooks'
+import type { TaxFormValues } from '../model'
 import { Card, CardContent, CardHeader } from '@/shared/ui'
 
 export function TaxCalculatorPage() {
   const [formValues, setFormValues] = useState<TaxFormValues | null>(null)
   const enabled = formValues !== null
 
-  const { data, isLoading, isError, error, refetch } = useTaxCalculator(
+  const { data, isLoading, isFetching, isError, error, refetch } = useTaxCalculator(
     formValues?.income ?? 0,
     formValues?.taxYear ?? 2022,
     enabled,
   )
+  const isBusy = enabled && (isLoading || isFetching)
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center px-4 py-12 sm:py-16">
@@ -33,7 +34,7 @@ export function TaxCalculatorPage() {
             <h2 className="text-base font-semibold text-text-primary">Enter your details</h2>
           </CardHeader>
           <CardContent>
-            <TaxForm onSubmit={(values) => setFormValues(values)} isLoading={enabled && isLoading} />
+            <TaxForm onSubmit={(values) => setFormValues(values)} isLoading={isBusy} />
           </CardContent>
         </Card>
 
@@ -42,6 +43,7 @@ export function TaxCalculatorPage() {
             <CardContent className="pt-6">
               <TaxResult
                 isLoading={isLoading}
+                isFetching={isFetching}
                 isError={isError}
                 error={error ?? undefined}
                 data={data}

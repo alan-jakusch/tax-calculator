@@ -1,5 +1,5 @@
-import type { BracketResult } from '../model/types'
-import { currencyDetailed, formatRatePercent } from '../lib/formatters'
+import type { BracketResult } from '../model'
+import { currencyDetailed, formatRatePercent } from '../lib'
 import { cn } from '@/shared/lib'
 
 interface BracketTableProps {

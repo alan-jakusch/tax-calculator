@@ -1,20 +1,20 @@
 import { BracketTable } from './BracketTable'
-import type { TaxResult as TaxResultType } from '../model/types'
-import { currencyCompact, percentDetailed } from '../lib/formatters'
-import { getTaxErrorMessage } from '../lib/taxErrorMessage'
-import { TaxApiError } from '../api/tax.api'
+import type { TaxResult as TaxResultType } from '../model'
+import { currencyCompact, getTaxErrorMessage, percentDetailed } from '../lib'
+import { TaxApiError } from '../api'
 import { Alert, Button, Skeleton, Separator } from '@/shared/ui'
 
 interface TaxResultProps {
   isLoading: boolean
+  isFetching: boolean
   isError: boolean
   error?: TaxApiError
   data?: TaxResultType
   onRetry?: () => void
 }
 
-export function TaxResult({ isLoading, isError, error, data, onRetry }: TaxResultProps) {
-  if (isLoading) {
+export function TaxResult({ isLoading, isFetching, isError, error, data, onRetry }: TaxResultProps) {
+  if (isLoading && !data) {
     return (
       <div data-testid="tax-result-skeleton" className="flex flex-col gap-4 animate-pulse">
         <div className="flex gap-4">
@@ -29,12 +29,24 @@ export function TaxResult({ isLoading, isError, error, data, onRetry }: TaxResul
 
   if (isError) {
     const canRetry = Boolean(onRetry && error?.retryable)
+    const supportText = canRetry
+      ? 'You can try again now.'
+      : 'If this problem continues, please try again later.'
 
     return (
       <Alert variant="error" title="Unable to load tax data">
         <p>{getTaxErrorMessage(error)}</p>
+        <p className="mt-1 text-xs text-text-secondary">{supportText}</p>
         {canRetry && (
-          <Button type="button" variant="secondary" size="sm" className="mt-3" onClick={onRetry}>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="mt-3"
+            onClick={onRetry}
+            loading={isFetching}
+            disabled={isFetching}
+          >
             Try again
           </Button>
         )}

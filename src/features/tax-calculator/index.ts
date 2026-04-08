@@ -1,2 +1,2 @@
-export { TaxCalculatorPage } from './ui/TaxCalculatorPage'
-export { TaxApiError } from './api/tax.api'
+export { TaxCalculatorPage } from './ui'
+export { TaxApiError } from './api'

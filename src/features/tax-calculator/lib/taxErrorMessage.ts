@@ -1,14 +1,14 @@
-import type { TaxApiError } from '../api/tax.api'
+import type { TaxApiError } from '../api'
 
 export function getTaxErrorMessage(error?: TaxApiError): string {
   if (!error) return 'An unexpected error occurred.'
 
   if (error.code === 'config') {
-    return 'API base URL is not configured. Set VITE_API_BASE_URL in your environment.'
+    return 'The tax service is unavailable right now. Please try again later.'
   }
 
   if (error.code === 'invalid_payload') {
-    return 'The tax service returned invalid data. Please contact support if this keeps happening.'
+    return 'The tax service returned an unexpected response. Please try again later.'
   }
 
   if (error.code === 'timeout') {

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import { BracketTable } from '../BracketTable'
-import type { BracketResult } from '../../model/types'
+import type { BracketResult } from '../../model'
 
 const bracketResults: BracketResult[] = [
   { min: 0, max: 50197, rate: 0.15, taxable: 50197, tax: 7529.55 },
