@@ -80,19 +80,6 @@ describe('TaxResult', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('shows retry message for 2022 year errors', () => {
-    render(
-      <TaxResult
-        isLoading={false}
-        isError={true}
-        error={retryableError}
-        data={undefined}
-        taxYear={2022}
-      />
-    )
-    expect(screen.getByText(/2022 endpoint is unstable/i)).toBeInTheDocument()
-  })
-
   it('calls onRetry when clicking retry button', async () => {
     const user = userEvent.setup()
     const onRetry = vi.fn()
@@ -102,7 +89,6 @@ describe('TaxResult', () => {
         isError={true}
         error={retryableError}
         data={undefined}
-        taxYear={2022}
         onRetry={onRetry}
       />,
     )
@@ -123,7 +109,6 @@ describe('TaxResult', () => {
         isError={true}
         error={nonRetryableError}
         data={undefined}
-        taxYear={2022}
         onRetry={vi.fn()}
       />,
     )

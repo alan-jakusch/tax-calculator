@@ -1,5 +1,5 @@
 import { BracketTable } from './BracketTable'
-import type { TaxResult as TaxResultType, TaxYear } from '../model/types'
+import type { TaxResult as TaxResultType } from '../model/types'
 import { currencyCompact, percentDetailed } from '../lib/formatters'
 import { getTaxErrorMessage } from '../lib/taxErrorMessage'
 import { TaxApiError } from '../api/tax.api'
@@ -10,11 +10,10 @@ interface TaxResultProps {
   isError: boolean
   error?: TaxApiError
   data?: TaxResultType
-  taxYear?: TaxYear
   onRetry?: () => void
 }
 
-export function TaxResult({ isLoading, isError, error, data, taxYear, onRetry }: TaxResultProps) {
+export function TaxResult({ isLoading, isError, error, data, onRetry }: TaxResultProps) {
   if (isLoading) {
     return (
       <div data-testid="tax-result-skeleton" className="flex flex-col gap-4 animate-pulse">

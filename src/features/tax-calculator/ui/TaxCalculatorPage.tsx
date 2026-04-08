@@ -45,7 +45,6 @@ export function TaxCalculatorPage() {
                 isError={isError}
                 error={error ?? undefined}
                 data={data}
-                taxYear={formValues.taxYear}
                 onRetry={() => void refetch()}
               />
             </CardContent>
