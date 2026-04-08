@@ -98,11 +98,31 @@ function resolveApiBaseUrl() {
   }
 }
 
-export async function fetchTaxBrackets(taxYear: TaxYear): Promise<TaxBracketsResponse> {
+export async function fetchTaxBrackets(
+  taxYear: TaxYear,
+  externalSignal?: AbortSignal,
+): Promise<TaxBracketsResponse> {
   const baseUrl = resolveApiBaseUrl()
 
   const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+  let didTimeout = false
+  let wasExternallyAborted = false
+  const timeout = setTimeout(() => {
+    didTimeout = true
+    controller.abort()
+  }, REQUEST_TIMEOUT_MS)
+  const handleExternalAbort = () => {
+    wasExternallyAborted = true
+    controller.abort()
+  }
+
+  if (externalSignal) {
+    if (externalSignal.aborted) {
+      wasExternallyAborted = true
+      controller.abort()
+    }
+    else externalSignal.addEventListener('abort', handleExternalAbort, { once: true })
+  }
 
   try {
     const res = await fetch(`${baseUrl}/tax-calculator/tax-year/${taxYear}`, {
@@ -133,6 +153,10 @@ export async function fetchTaxBrackets(taxYear: TaxYear): Promise<TaxBracketsRes
     }
 
     if (error instanceof DOMException && error.name === 'AbortError') {
+      if (!didTimeout && wasExternallyAborted) {
+        throw error
+      }
+
       const apiError = new TaxApiError('Request timed out while loading tax data.', {
         code: 'timeout',
         retryable: true,
@@ -166,6 +190,9 @@ export async function fetchTaxBrackets(taxYear: TaxYear): Promise<TaxBracketsRes
     logTaxApiFailure({ code: apiError.code, retryable: apiError.retryable, taxYear })
     throw apiError
   } finally {
+    if (externalSignal) {
+      externalSignal.removeEventListener('abort', handleExternalAbort)
+    }
     clearTimeout(timeout)
   }
 }

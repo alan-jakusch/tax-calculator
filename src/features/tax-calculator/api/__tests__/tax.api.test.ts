@@ -46,6 +46,16 @@ describe('tax.api', () => {
     })
   })
 
+  it('rethrows external aborts without mapping to timeout', async () => {
+    vi.stubEnv('VITE_API_BASE_URL', 'http://localhost:5001')
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(new DOMException('Aborted', 'AbortError'))
+    const { fetchTaxBrackets } = await loadApi()
+    const controller = new AbortController()
+    controller.abort()
+
+    await expect(fetchTaxBrackets(2022, controller.signal)).rejects.toBeInstanceOf(DOMException)
+  })
+
   it('maps malformed payloads to invalid_payload errors', async () => {
     vi.stubEnv('VITE_API_BASE_URL', 'http://localhost:5001')
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(

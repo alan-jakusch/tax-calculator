@@ -46,6 +46,24 @@ describe('TaxResult', () => {
     expect(screen.getByText(/temporarily unavailable/i)).toBeInTheDocument()
   })
 
+  it('keeps previous result visible when refresh fails', () => {
+    render(
+      <TaxResult
+        isLoading={false}
+        isFetching={false}
+        isError={true}
+        error={retryableError}
+        data={mockResult}
+        onRetry={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+    expect(screen.getByText(/unable to refresh tax data/i)).toBeInTheDocument()
+    expect(screen.getByText(currencyCompact.format(mockResult.totalTax))).toBeInTheDocument()
+    expect(screen.getByText(/bracket breakdown/i)).toBeInTheDocument()
+  })
+
   it('shows config-specific message for config errors', () => {
     const configError = new TaxApiError('Missing VITE_API_BASE_URL. Set it in your environment file.', {
       code: 'config',

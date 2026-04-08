@@ -34,6 +34,3 @@ export type { SelectProps, SelectOption } from './select'
 
 export { Alert } from './alert'
 export type { AlertProps, AlertVariant } from './alert'
-
-export { CurrencyInput } from './currency-input'
-export type { CurrencyInputProps } from './currency-input'

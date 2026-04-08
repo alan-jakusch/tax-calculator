@@ -6,7 +6,7 @@ import type { TaxBracketsResponse, TaxResult, TaxYear } from '../model'
 export function useTaxCalculator(income: number, taxYear: TaxYear, enabled: boolean) {
   return useQuery<TaxBracketsResponse, TaxApiError, TaxResult>({
     queryKey: ['tax-brackets', taxYear],
-    queryFn: () => fetchTaxBrackets(taxYear),
+    queryFn: ({ signal }) => fetchTaxBrackets(taxYear, signal),
     select: (data) => calculateTax(income, data.tax_brackets),
     enabled,
   })

@@ -27,12 +27,12 @@ export function TaxResult({ isLoading, isFetching, isError, error, data, onRetry
     )
   }
 
-  if (isError) {
-    const canRetry = Boolean(onRetry && error?.retryable)
-    const supportText = canRetry
-      ? 'You can try again now.'
-      : 'If this problem continues, please try again later.'
+  const canRetry = Boolean(onRetry && error?.retryable)
+  const supportText = canRetry
+    ? 'You can try again now.'
+    : 'If this problem continues, please try again later.'
 
+  if (isError && !data) {
     return (
       <Alert variant="error" title="Unable to load tax data">
         <p>{getTaxErrorMessage(error)}</p>
@@ -58,6 +58,26 @@ export function TaxResult({ isLoading, isFetching, isError, error, data, onRetry
 
   return (
     <div className="flex flex-col gap-5 animate-slide-up">
+      {isError && (
+        <Alert variant="error" title="Unable to refresh tax data">
+          <p>{getTaxErrorMessage(error)}</p>
+          <p className="mt-1 text-xs text-text-secondary">{supportText}</p>
+          {canRetry && (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="mt-3"
+              onClick={onRetry}
+              loading={isFetching}
+              disabled={isFetching}
+            >
+              Try again
+            </Button>
+          )}
+        </Alert>
+      )}
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex min-w-0 flex-col gap-1 rounded-xl border border-cta/40 bg-cta/10 p-5 backdrop-blur-md">
           <span className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
