@@ -16,15 +16,33 @@ function createWrapper() {
 }
 
 describe('useTaxCalculator', () => {
+  it('does not fetch until enabled is true', async () => {
+    let callCount = 0
+    server.use(
+      http.get('http://localhost:5001/tax-calculator/tax-year/:year', () => {
+        callCount++
+        return HttpResponse.json(mockBrackets)
+      }),
+    )
+
+    const { result } = renderHook(() => useTaxCalculator(50000, 2022, false), {
+      wrapper: createWrapper(),
+    })
+
+    await waitFor(() => expect(result.current.fetchStatus).toBe('idle'))
+    expect(result.current.isLoading).toBe(false)
+    expect(callCount).toBe(0)
+  })
+
   it('returns isLoading true while fetching', () => {
-    const { result } = renderHook(() => useTaxCalculator(50000, 2022), {
+    const { result } = renderHook(() => useTaxCalculator(50000, 2022, true), {
       wrapper: createWrapper(),
     })
     expect(result.current.isLoading).toBe(true)
   })
 
   it('returns TaxResult on successful fetch', async () => {
-    const { result } = renderHook(() => useTaxCalculator(60000, 2022), {
+    const { result } = renderHook(() => useTaxCalculator(60000, 2022, true), {
       wrapper: createWrapper(),
     })
     await waitFor(() => expect(result.current.isLoading).toBe(false))
@@ -41,7 +59,7 @@ describe('useTaxCalculator', () => {
         HttpResponse.error()
       )
     )
-    const { result } = renderHook(() => useTaxCalculator(50000, 2022), {
+    const { result } = renderHook(() => useTaxCalculator(50000, 2022, true), {
       wrapper: createWrapper(),
     })
     await waitFor(() => expect(result.current.isError).toBe(true))
@@ -49,7 +67,7 @@ describe('useTaxCalculator', () => {
   })
 
   it('returns valid TaxResult with totalTax 0 when income is 0', async () => {
-    const { result } = renderHook(() => useTaxCalculator(0, 2021), {
+    const { result } = renderHook(() => useTaxCalculator(0, 2021, true), {
       wrapper: createWrapper(),
     })
     await waitFor(() => expect(result.current.isLoading).toBe(false))
@@ -73,7 +91,7 @@ describe('useTaxCalculator', () => {
     const wrapper = ({ children }: { children: ReactNode }) =>
       createElement(QueryClientProvider, { client: queryClient }, children)
 
-    const { result } = renderHook(() => useTaxCalculator(50000, 2022), { wrapper })
+    const { result } = renderHook(() => useTaxCalculator(50000, 2022, true), { wrapper })
     await waitFor(() => expect(result.current.isLoading).toBe(false), { timeout: 5000 })
     expect(result.current.data).toBeDefined()
     expect(callCount).toBeGreaterThanOrEqual(3)

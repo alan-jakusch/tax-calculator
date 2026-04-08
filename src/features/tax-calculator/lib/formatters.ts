@@ -1,12 +1,12 @@
-export const currencyCompact = new Intl.NumberFormat('en-US', {
+export const currencyCompact = new Intl.NumberFormat('en-CA', {
   style: 'currency',
-  currency: 'USD',
+  currency: 'CAD',
   maximumFractionDigits: 0,
 })
 
-export const currencyDetailed = new Intl.NumberFormat('en-US', {
+export const currencyDetailed = new Intl.NumberFormat('en-CA', {
   style: 'currency',
-  currency: 'USD',
+  currency: 'CAD',
   minimumFractionDigits: 0,
   maximumFractionDigits: 2,
 })

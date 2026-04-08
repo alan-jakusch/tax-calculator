@@ -7,13 +7,13 @@ import { Card, CardContent, CardHeader } from '@/shared/ui'
 
 export function TaxCalculatorPage() {
   const [formValues, setFormValues] = useState<TaxFormValues | null>(null)
+  const enabled = formValues !== null
 
-  const { data, isLoading, isError, error } = useTaxCalculator(
+  const { data, isLoading, isError, error, refetch } = useTaxCalculator(
     formValues?.income ?? 0,
     formValues?.taxYear ?? 2022,
+    enabled,
   )
-
-  const enabled = formValues !== null
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center px-4 py-12 sm:py-16">
@@ -46,6 +46,7 @@ export function TaxCalculatorPage() {
                 error={error ?? undefined}
                 data={data}
                 taxYear={formValues.taxYear}
+                onRetry={() => void refetch()}
               />
             </CardContent>
           </Card>

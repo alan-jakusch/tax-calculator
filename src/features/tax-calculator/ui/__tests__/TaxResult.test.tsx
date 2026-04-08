@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { TaxResult } from '../TaxResult'
 import type { TaxResult as TaxResultType } from '../../model/types'
+import { currencyCompact } from '../../lib/formatters'
 
 const mockResult: TaxResultType = {
   totalTax: 15000,
@@ -38,7 +40,7 @@ describe('TaxResult', () => {
 
   it('renders totalTax formatted as currency', () => {
     render(<TaxResult isLoading={false} isError={false} data={mockResult} />)
-    expect(screen.getByText(/\$15,000/)).toBeInTheDocument()
+    expect(screen.getByText(currencyCompact.format(mockResult.totalTax))).toBeInTheDocument()
   })
 
   it('renders effectiveRate as a percentage', () => {
@@ -64,5 +66,23 @@ describe('TaxResult', () => {
       />
     )
     expect(screen.getByText(/try again/i)).toBeInTheDocument()
+  })
+
+  it('calls onRetry when clicking retry button', async () => {
+    const user = userEvent.setup()
+    const onRetry = vi.fn()
+    render(
+      <TaxResult
+        isLoading={false}
+        isError={true}
+        error={new Error('Server error')}
+        data={undefined}
+        taxYear={2022}
+        onRetry={onRetry}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: /try again/i }))
+    expect(onRetry).toHaveBeenCalledTimes(1)
   })
 })
