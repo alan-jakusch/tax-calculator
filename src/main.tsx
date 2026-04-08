@@ -11,7 +11,10 @@ const queryClient = new QueryClient({
       retry: (failureCount, error) => {
         if (!(error instanceof TaxApiError)) return failureCount < 2
         if (!error.retryable) return false
-        return failureCount < 3
+        if (error.code === 'timeout') return failureCount < 3
+        if (error.code === 'network') return failureCount < 2
+        if (error.code === 'http' && error.status && error.status >= 500) return failureCount < 3
+        return false
       },
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
     },

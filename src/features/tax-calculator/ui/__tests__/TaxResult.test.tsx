@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { TaxResult } from '../TaxResult'
 import type { TaxResult as TaxResultType } from '../../model/types'
 import { currencyCompact } from '../../lib/formatters'
+import { TaxApiError } from '../../api/tax.api'
 
 const mockResult: TaxResultType = {
   totalTax: 15000,
@@ -18,6 +19,12 @@ const mockResult: TaxResultType = {
 }
 
 describe('TaxResult', () => {
+  const retryableError = new TaxApiError('Server error while loading tax data. Please try again.', {
+    code: 'http',
+    status: 500,
+    retryable: true,
+  })
+
   it('shows loading skeleton when isLoading is true', () => {
     const { container } = render(
       <TaxResult isLoading={true} isError={false} data={undefined} />
@@ -30,12 +37,30 @@ describe('TaxResult', () => {
       <TaxResult
         isLoading={false}
         isError={true}
-        error={new Error('API error')}
+        error={retryableError}
         data={undefined}
       />
     )
     expect(screen.getByRole('alert')).toBeInTheDocument()
-    expect(screen.getByText(/API error/i)).toBeInTheDocument()
+    expect(screen.getByText(/temporarily unavailable/i)).toBeInTheDocument()
+  })
+
+  it('shows config-specific message for config errors', () => {
+    const configError = new TaxApiError('Missing VITE_API_BASE_URL. Set it in your environment file.', {
+      code: 'config',
+      retryable: false,
+    })
+
+    render(
+      <TaxResult
+        isLoading={false}
+        isError={true}
+        error={configError}
+        data={undefined}
+      />
+    )
+
+    expect(screen.getByText(/api base url is not configured/i)).toBeInTheDocument()
   })
 
   it('renders totalTax formatted as currency', () => {
@@ -60,12 +85,12 @@ describe('TaxResult', () => {
       <TaxResult
         isLoading={false}
         isError={true}
-        error={new Error('Server error')}
+        error={retryableError}
         data={undefined}
         taxYear={2022}
       />
     )
-    expect(screen.getByText(/try again/i)).toBeInTheDocument()
+    expect(screen.getByText(/2022 endpoint is unstable/i)).toBeInTheDocument()
   })
 
   it('calls onRetry when clicking retry button', async () => {
@@ -75,7 +100,7 @@ describe('TaxResult', () => {
       <TaxResult
         isLoading={false}
         isError={true}
-        error={new Error('Server error')}
+        error={retryableError}
         data={undefined}
         taxYear={2022}
         onRetry={onRetry}
@@ -84,5 +109,25 @@ describe('TaxResult', () => {
 
     await user.click(screen.getByRole('button', { name: /try again/i }))
     expect(onRetry).toHaveBeenCalledTimes(1)
+  })
+
+  it('hides retry button for non-retryable errors', () => {
+    const nonRetryableError = new TaxApiError('Invalid tax data format received from API.', {
+      code: 'invalid_payload',
+      retryable: false,
+    })
+
+    render(
+      <TaxResult
+        isLoading={false}
+        isError={true}
+        error={nonRetryableError}
+        data={undefined}
+        taxYear={2022}
+        onRetry={vi.fn()}
+      />,
+    )
+
+    expect(screen.queryByRole('button', { name: /try again/i })).not.toBeInTheDocument()
   })
 })

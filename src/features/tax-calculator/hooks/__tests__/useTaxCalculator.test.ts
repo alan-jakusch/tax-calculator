@@ -6,6 +6,7 @@ import { createElement, type ReactNode } from 'react'
 import { server } from '@/test/server'
 import { useTaxCalculator } from '../useTaxCalculator'
 import { mockBrackets } from '@/test/handlers'
+import { TaxApiError } from '../../api/tax.api'
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -64,6 +65,8 @@ describe('useTaxCalculator', () => {
     })
     await waitFor(() => expect(result.current.isError).toBe(true))
     expect(result.current.data).toBeUndefined()
+    expect(result.current.error).toBeInstanceOf(TaxApiError)
+    expect(result.current.error?.code).toBe('network')
   })
 
   it('returns valid TaxResult with totalTax 0 when income is 0', async () => {
