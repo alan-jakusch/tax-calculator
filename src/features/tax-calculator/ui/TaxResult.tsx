@@ -30,16 +30,10 @@ export function TaxResult({ isLoading, isError, error, data, taxYear, onRetry }:
 
   if (isError) {
     const canRetry = Boolean(onRetry && error?.retryable)
-    const show2022Hint = taxYear === 2022 && Boolean(error?.retryable)
 
     return (
       <Alert variant="error" title="Unable to load tax data">
         <p>{getTaxErrorMessage(error)}</p>
-        {show2022Hint && (
-          <p className="mt-1 font-medium">
-            The 2022 endpoint is unstable. Please try again.
-          </p>
-        )}
         {canRetry && (
           <Button type="button" variant="secondary" size="sm" className="mt-3" onClick={onRetry}>
             Try again
