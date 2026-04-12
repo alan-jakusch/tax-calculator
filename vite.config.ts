@@ -30,12 +30,16 @@ function createCsp(mode: string, apiBaseUrl: string | undefined): string {
     connectSources.add('ws://127.0.0.1:*')
   }
 
+  // Vite dev injects CSS via inline <style>; Google Fonts use fonts.googleapis.com + fonts.gstatic.com
+  const styleSources = ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com']
+  const fontSources = ["'self'", 'data:', 'https://fonts.gstatic.com']
+
   return [
     "default-src 'self'",
     "script-src 'self'",
-    "style-src 'self'",
+    `style-src ${styleSources.join(' ')}`,
     "img-src 'self' data:",
-    "font-src 'self' data:",
+    `font-src ${fontSources.join(' ')}`,
     `connect-src ${Array.from(connectSources).join(' ')}`,
   ].join('; ')
 }
